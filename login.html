@@ -1,0 +1,632 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Login | Vow & Bloom</title>
+
+    <link rel="stylesheet" href="style.css">
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background: linear-gradient(135deg, #fff7f5, #f7e5e8);
+            color: #333;
+            min-height: 100vh;
+        }
+
+        .login-header {
+            background: white;
+            padding: 18px 7%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+        }
+
+        .logo {
+            color: #9b4964;
+            font-size: 27px;
+            font-weight: bold;
+            text-decoration: none;
+        }
+
+        .home-link {
+            color: #9b4964;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .login-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 45px 20px;
+            min-height: calc(100vh - 75px);
+        }
+
+        .login-card {
+            background: white;
+            width: 100%;
+            max-width: 440px;
+            padding: 38px;
+            border-radius: 20px;
+            box-shadow: 0 12px 40px rgba(100,35,60,0.12);
+        }
+
+        .login-heading {
+            text-align: center;
+            margin-bottom: 28px;
+        }
+
+        .login-icon {
+            font-size: 43px;
+            margin-bottom: 8px;
+        }
+
+        .login-heading h1 {
+            color: #9b4964;
+            font-size: 29px;
+            margin: 5px 0 10px;
+        }
+
+        .login-heading p {
+            color: #777;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        .login-tabs {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 25px;
+            background: #fff4f6;
+            padding: 5px;
+            border-radius: 10px;
+        }
+
+        .login-tabs button {
+            flex: 1;
+            border: none;
+            padding: 12px 5px;
+            border-radius: 8px;
+            background: transparent;
+            color: #8a5365;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .login-tabs button.active {
+            background: #9b4964;
+            color: white;
+        }
+
+        .form-group {
+            margin-bottom: 18px;
+        }
+
+        .form-group label {
+            display: block;
+            font-weight: 600;
+            font-size: 14px;
+            margin-bottom: 8px;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 13px 14px;
+            border: 1px solid #e3d5d9;
+            border-radius: 9px;
+            font-size: 15px;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        .form-group input:focus {
+            border-color: #9b4964;
+            box-shadow: 0 0 0 3px rgba(155,73,100,0.09);
+        }
+
+        .form-options {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 10px;
+            font-size: 13px;
+            margin-bottom: 22px;
+        }
+
+        .remember-me {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .form-options a,
+        .signup-text a {
+            color: #9b4964;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .login-button {
+            width: 100%;
+            border: none;
+            background: #9b4964;
+            color: white;
+            padding: 14px;
+            border-radius: 9px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .login-button:hover {
+            background: #7d354e;
+        }
+
+        .signup-text {
+            text-align: center;
+            margin-top: 23px;
+            font-size: 14px;
+            color: #666;
+        }
+
+        .divider {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin: 22px 0;
+            color: #999;
+            font-size: 12px;
+            text-align: center;
+        }
+
+        .divider::before,
+        .divider::after {
+            content: "";
+            height: 1px;
+            flex: 1;
+            background: #eee;
+        }
+
+        .back-home {
+            display: block;
+            text-align: center;
+            margin-top: 22px;
+            color: #8a5365;
+            font-size: 13px;
+            text-decoration: none;
+        }
+
+        .message {
+            display: none;
+            padding: 12px;
+            margin-bottom: 16px;
+            border-radius: 8px;
+            font-size: 13px;
+            line-height: 1.5;
+        }
+
+        .message.error {
+            display: block;
+            background: #fff0f0;
+            color: #a52a2a;
+        }
+
+        .message.success {
+            display: block;
+            background: #edf9ef;
+            color: #256b36;
+        }
+
+        [hidden] {
+            display: none !important;
+        }
+
+        @media (max-width: 480px) {
+            .login-card {
+                padding: 25px 20px;
+            }
+
+            .login-header {
+                padding: 16px 5%;
+            }
+
+            .logo {
+                font-size: 22px;
+            }
+
+            .login-heading h1 {
+                font-size: 25px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Header -->
+    <header class="login-header">
+        <a href="index.html" class="logo">Vow & Bloom</a>
+        <a href="index.html" class="home-link">← Back to Home</a>
+    </header>
+
+    <!-- Login Section -->
+    <main class="login-container">
+        <section class="login-card">
+
+            <div class="login-heading">
+                <div class="login-icon">🌸</div>
+                <h1 id="page-title">Welcome Back!</h1>
+                <p id="page-subtitle">
+                    Sign in to plan your perfect celebration.
+                </p>
+            </div>
+
+            <!-- Login Modes -->
+            <div class="login-tabs">
+                <button type="button"
+                        class="active"
+                        id="customer-tab">
+                    Customer
+                </button>
+
+                <button type="button"
+                        id="admin-tab">
+                    Admin
+                </button>
+            </div>
+
+            <!-- Login Form -->
+            <form id="login-form">
+
+                <div class="form-group" id="name-group" hidden>
+                    <label for="full-name">Full Name</label>
+                    <input type="text"
+                           id="full-name"
+                           placeholder="Enter your full name"
+                           autocomplete="name">
+                </div>
+
+                <div class="form-group">
+                    <label for="email" id="email-label">
+                        Email Address
+                    </label>
+                    <input type="text"
+                           id="email"
+                           placeholder="you@example.com"
+                           autocomplete="username"
+                           required>
+                </div>
+
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="password"
+                           id="password"
+                           placeholder="Enter your password"
+                           autocomplete="current-password"
+                           required>
+                </div>
+
+                <div class="form-group" id="confirm-group" hidden>
+                    <label for="confirm-password">
+                        Confirm Password
+                    </label>
+                    <input type="password"
+                           id="confirm-password"
+                           placeholder="Re-enter your password"
+                           autocomplete="new-password">
+                </div>
+
+                <div class="form-options" id="login-options">
+                    <label class="remember-me">
+                        <input type="checkbox" id="remember">
+                        Remember me
+                    </label>
+
+                    <a href="#" id="forgot-link">
+                        Forgot password?
+                    </a>
+                </div>
+
+                <div id="form-message"
+                     class="message"
+                     role="status"
+                     aria-live="polite"></div>
+
+                <button type="submit"
+                        class="login-button"
+                        id="submit-button">
+                    Login
+                </button>
+
+            </form>
+
+            <div class="divider" id="divider">
+                YOUR CELEBRATION STARTS HERE
+            </div>
+
+            <p class="signup-text" id="signup-text">
+                New to Vow & Bloom?
+                <a href="#" id="signup-link">Create an account</a>
+            </p>
+
+            <a href="index.html" class="back-home">
+                Explore weddings, birthdays & parties
+            </a>
+
+        </section>
+    </main>
+
+    <script>
+        // ========================================
+        // DEMO ADMIN CREDENTIALS
+        // ========================================
+
+        const ADMIN_ID = "VBADMIN001";
+        const ADMIN_PASSWORD = "BloomDemo@123";
+
+        let currentMode = "customer";
+        let isSignup = false;
+
+        const form = document.getElementById("login-form");
+        const message = document.getElementById("form-message");
+
+        const emailInput = document.getElementById("email");
+        const passwordInput = document.getElementById("password");
+        const fullNameInput = document.getElementById("full-name");
+        const confirmPasswordInput =
+            document.getElementById("confirm-password");
+
+        // ========================================
+        // SWITCH BETWEEN CUSTOMER AND ADMIN
+        // ========================================
+
+        document.getElementById("customer-tab")
+            .addEventListener("click", () => {
+                currentMode = "customer";
+                isSignup = false;
+                updateForm();
+            });
+
+        document.getElementById("admin-tab")
+            .addEventListener("click", () => {
+                currentMode = "admin";
+                isSignup = false;
+                updateForm();
+            });
+
+        // ========================================
+        // UPDATE FORM DISPLAY
+        // ========================================
+
+        function updateForm() {
+            const isAdmin = currentMode === "admin";
+
+            document.getElementById("customer-tab")
+                .classList.toggle("active", !isAdmin);
+
+            document.getElementById("admin-tab")
+                .classList.toggle("active", isAdmin);
+
+            document.getElementById("page-title").textContent =
+                isSignup
+                    ? "Create Your Account"
+                    : isAdmin
+                        ? "Admin Portal"
+                        : "Welcome Back!";
+
+            document.getElementById("page-subtitle").textContent =
+                isSignup
+                    ? "Join Vow & Bloom and plan your celebration."
+                    : isAdmin
+                        ? "Authorized administrators only."
+                        : "Sign in to plan your perfect celebration.";
+
+            document.getElementById("email-label").textContent =
+                isAdmin ? "Admin ID" : "Email Address";
+
+            emailInput.placeholder =
+                isAdmin ? "Enter your Admin ID" : "you@example.com";
+
+            emailInput.autocomplete =
+                isSignup ? "username" : "username";
+
+            passwordInput.autocomplete =
+                isSignup ? "new-password" : "current-password";
+
+            document.getElementById("name-group").hidden = !isSignup;
+            document.getElementById("confirm-group").hidden = !isSignup;
+            document.getElementById("login-options").hidden =
+                isSignup || isAdmin;
+
+            document.getElementById("divider").hidden =
+                isSignup || isAdmin;
+
+            document.getElementById("signup-text").hidden = isAdmin;
+
+            document.getElementById("submit-button").textContent =
+                isSignup
+                    ? "Create Account"
+                    : isAdmin
+                        ? "Admin Login"
+                        : "Login";
+
+            // Reset fields when switching portal modes.
+            emailInput.value = "";
+            passwordInput.value = "";
+            fullNameInput.value = "";
+            confirmPasswordInput.value = "";
+
+            fullNameInput.required = isSignup;
+            confirmPasswordInput.required = isSignup;
+
+            clearMessage();
+        }
+
+        // ========================================
+        // CREATE ACCOUNT TOGGLE
+        // ========================================
+
+        document.getElementById("signup-link")
+            .addEventListener("click", function(event) {
+                event.preventDefault();
+
+                isSignup = !isSignup;
+                updateForm();
+
+                if (isSignup) {
+                    document.getElementById("signup-text").innerHTML =
+                        'Already have an account? ' +
+                        '<a href="#" id="signup-link">Login instead</a>';
+
+                    document.getElementById("signup-link")
+                        .addEventListener("click", function(e) {
+                            e.preventDefault();
+                            isSignup = false;
+                            updateForm();
+                        });
+                } else {
+                    document.getElementById("signup-text").innerHTML =
+                        'New to Vow & Bloom? ' +
+                        '<a href="#" id="signup-link">Create an account</a>';
+
+                    document.getElementById("signup-link")
+                        .addEventListener("click", function(e) {
+                            e.preventDefault();
+                            isSignup = true;
+                            updateForm();
+                        });
+                }
+            });
+
+        // ========================================
+        // FORGOT PASSWORD
+        // ========================================
+
+        document.getElementById("forgot-link")
+            .addEventListener("click", function(event) {
+                event.preventDefault();
+
+                showMessage(
+                    "Password recovery is not connected yet. " +
+                    "A backend and email verification are required.",
+                    "error"
+                );
+            });
+
+        // ========================================
+        // HANDLE FORM SUBMISSION
+        // ========================================
+
+        form.addEventListener("submit", function(event) {
+            event.preventDefault();
+
+            const userID = emailInput.value.trim();
+            const password = passwordInput.value;
+
+            // ADMIN LOGIN
+            if (currentMode === "admin") {
+
+                if (
+                    userID === ADMIN_ID &&
+                    password === ADMIN_PASSWORD
+                ) {
+                    // Demo-only session marker.
+                    sessionStorage.setItem(
+                        "vowBloomAdminLoggedIn",
+                        "true"
+                    );
+
+                    window.location.href = "admin-dashboard.html";
+                } else {
+                    showMessage(
+                        "Invalid Admin ID or password.",
+                        "error"
+                    );
+                }
+
+                return;
+            }
+
+            // CUSTOMER REGISTRATION INTERFACE
+            if (isSignup) {
+                const fullName = fullNameInput.value.trim();
+                const confirmPassword =
+                    confirmPasswordInput.value;
+
+                if (!fullName) {
+                    showMessage("Please enter your full name.", "error");
+                    return;
+                }
+
+                if (password.length < 8) {
+                    showMessage(
+                        "Your password must contain at least 8 characters.",
+                        "error"
+                    );
+                    return;
+                }
+
+                if (password !== confirmPassword) {
+                    showMessage("Passwords do not match.", "error");
+                    return;
+                }
+
+                showMessage(
+                    "Your form is valid, but registration is not " +
+                    "connected yet. A backend is needed to create " +
+                    "and securely store your account.",
+                    "error"
+                );
+
+                return;
+            }
+
+            // CUSTOMER LOGIN INTERFACE
+            if (!userID || !password) {
+                showMessage(
+                    "Please enter your email and password.",
+                    "error"
+                );
+                return;
+            }
+
+            showMessage(
+                "Customer login is not connected yet. " +
+                "A user database and secure authentication " +
+                "must be set up first.",
+                "error"
+            );
+        });
+
+        // ========================================
+        // MESSAGE HELPERS
+        // ========================================
+
+        function showMessage(text, type) {
+            message.textContent = text;
+            message.className = "message " + type;
+        }
+
+        function clearMessage() {
+            message.textContent = "";
+            message.className = "message";
+        }
+
+        // Initialize the page.
+        updateForm();
+    </script>
+
+</body>
+</html>

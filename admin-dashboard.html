@@ -1,0 +1,255 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard | Vow & Bloom</title>
+    <style>
+        * { box-sizing: border-box; }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #fff7f8;
+            color: #333;
+        }
+
+        header {
+            background: #91445f;
+            color: white;
+            padding: 20px 6%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        header h2 { margin: 0; }
+
+        button {
+            border: 0;
+            border-radius: 7px;
+            padding: 10px 14px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .logout {
+            background: white;
+            color: #91445f;
+        }
+
+        main { padding: 30px 6%; }
+
+        .welcome { color: #91445f; }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+            gap: 18px;
+            margin: 25px 0;
+        }
+
+        .stat-card, .booking-card {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 4px 16px #63283b12;
+        }
+
+        .stat-card p {
+            color: #777;
+            margin-bottom: 8px;
+        }
+
+        .stat-card h2 {
+            margin: 0;
+            color: #91445f;
+            font-size: 30px;
+        }
+
+        .booking-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(270px, 1fr));
+            gap: 18px;
+        }
+
+        .booking-card h3 {
+            color: #91445f;
+            margin-top: 0;
+        }
+
+        .booking-card p {
+            overflow-wrap: anywhere;
+            line-height: 1.5;
+        }
+
+        .status {
+            display: inline-block;
+            padding: 6px 10px;
+            border-radius: 20px;
+            background: #fff0d5;
+            color: #815300;
+            font-size: 13px;
+            font-weight: bold;
+        }
+
+        .status.done {
+            background: #e2f7e8;
+            color: #246c39;
+        }
+
+        .mark-done {
+            background: #91445f;
+            color: white;
+            margin-top: 8px;
+        }
+
+        .mark-done:disabled {
+            background: #999;
+            cursor: default;
+        }
+
+        .empty {
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            color: #666;
+        }
+
+        @media (max-width: 500px) {
+            main { padding: 22px 5%; }
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <h2>🌸 Vow & Bloom Admin</h2>
+    <button class="logout" id="logout-button">Logout</button>
+</header>
+
+<main>
+    <h1 class="welcome">Welcome, Admin!</h1>
+    <p>Manage customer event bookings from your dashboard.</p>
+
+    <section class="stats">
+        <div class="stat-card">
+            <p>Total Bookings</p>
+            <h2 id="total-count">0</h2>
+        </div>
+        <div class="stat-card">
+            <p>Pending Bookings</p>
+            <h2 id="pending-count">0</h2>
+        </div>
+        <div class="stat-card">
+            <p>Completed Bookings</p>
+            <h2 id="done-count">0</h2>
+        </div>
+    </section>
+
+    <h2>Customer Bookings</h2>
+    <div id="booking-list" class="booking-list"></div>
+</main>
+
+<script>
+    // Demo-only access check; not secure authentication.
+    if (sessionStorage.getItem("vowBloomAdminLoggedIn") !== "true") {
+        window.location.replace("login.html");
+    }
+
+    const bookingList = document.getElementById("booking-list");
+
+    function loadBookings() {
+        const bookings = JSON.parse(
+            localStorage.getItem("vowBloomBookings") || "[]"
+        );
+
+        document.getElementById("total-count").textContent =
+            bookings.length;
+
+        document.getElementById("pending-count").textContent =
+            bookings.filter(b => b.status !== "Done").length;
+
+        document.getElementById("done-count").textContent =
+            bookings.filter(b => b.status === "Done").length;
+
+        bookingList.replaceChildren();
+
+        if (bookings.length === 0) {
+            const empty = document.createElement("p");
+            empty.className = "empty";
+            empty.textContent =
+                "No bookings yet. Customer enquiries will appear here when submitted in this browser.";
+            bookingList.appendChild(empty);
+            return;
+        }
+
+        bookings.forEach((booking, index) => {
+            const isDone = booking.status === "Done";
+            const card = document.createElement("article");
+            card.className = "booking-card";
+
+            function addText(tag, text) {
+                const element = document.createElement(tag);
+                element.textContent = text;
+                card.appendChild(element);
+                return element;
+            }
+
+            addText("h3", booking.name || "Unnamed customer");
+            addText("p", "Event: " + (booking.eventType || "Not specified"));
+            addText("p", "Date: " + (booking.date || "Not specified"));
+            addText("p", "Guests: " + (booking.guests || "Not specified"));
+            addText("p", "Message: " + (booking.message || "No message"));
+            addText(
+                "p",
+                "Submitted: " +
+                (booking.submittedAt
+                    ? new Date(booking.submittedAt).toLocaleString()
+                    : "Not available")
+            );
+
+            const status = addText("span", isDone ? "Done" : "Pending");
+            status.className = "status" + (isDone ? " done" : "");
+
+            const button = addText(
+                "button",
+                isDone ? "Booking Completed ✓" : "Mark as Done"
+            );
+            button.className = "mark-done";
+            button.disabled = isDone;
+
+            button.addEventListener("click", function() {
+                const latestBookings = JSON.parse(
+                    localStorage.getItem("vowBloomBookings") || "[]"
+                );
+
+                if (!latestBookings[index]) return;
+
+                latestBookings[index].status = "Done";
+
+                localStorage.setItem(
+                    "vowBloomBookings",
+                    JSON.stringify(latestBookings)
+                );
+
+                loadBookings();
+            });
+
+            bookingList.appendChild(card);
+        });
+    }
+
+    document.getElementById("logout-button").addEventListener("click", () => {
+        sessionStorage.removeItem("vowBloomAdminLoggedIn");
+        window.location.href = "login.html";
+    });
+
+    loadBookings();
+</script>
+
+</body>
+</html>
